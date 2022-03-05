@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HiroTest"
         mc:Ignorable="d"
-        Title="MainWindow" Height="257" Width="703">
+        Height="257" Width="703" Title="Send to Hiro" ResizeMode="CanMinimize">
     <Grid>
         <TextBox Name="ID_Input" HorizontalAlignment="Left" Margin="102,22,0,0" TextWrapping="NoWrap" Text="" VerticalAlignment="Top" Height="24" Width="563"/>
         <Button Content="Send" HorizontalAlignment="Left" Margin="582,174,0,0" VerticalAlignment="Top" Width="83" Click="Button_Click"/>

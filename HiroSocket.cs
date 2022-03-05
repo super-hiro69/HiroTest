@@ -39,7 +39,11 @@ namespace HiroTest
         public void Connect(IPAddress ip, int port)
         {
             if (ClientSocket != null)
+            {
+                if (ClientSocket.Connected)
+                    ClientSocket.DisconnectAsync(true);
                 ClientSocket.BeginConnect(ip, port, ConnectCallback, ClientSocket);
+            }
         }
         private void ConnectCallback(IAsyncResult ar)
         {
@@ -49,6 +53,7 @@ namespace HiroTest
                 {
                     Socket handler = (Socket)ar.AsyncState;
                     handler.EndConnect(ar);
+                    OnClientSocketConnected(new());
                 }
             }
             catch
@@ -159,15 +164,25 @@ namespace HiroTest
                 handler(this, e);
             }
         }
+        
+        protected virtual void OnClientSocketConnected(EventArgs e)
+        {
+            EventHandler<EventArgs>? handler = ClientSocketConnected;
+            if (handler != null)
+            {
+                handler(this, e);
+            }
+        }
 
         public event EventHandler<EventArgs>? DataRecevieCompleted;
         public event EventHandler<EventArgs>? DataSendCompleted;
+        public event EventHandler<EventArgs>? ClientSocketConnected;
         #endregion
     }
 
     public class HiroSocketHelper
     {
-        public static int Get_Port(String name)
+        public static string Get_FileLocation(String name)
         {
             System.Diagnostics.Process[] pros = System.Diagnostics.Process.GetProcesses(); //获取本机所有进程
             foreach (var pro in pros)
@@ -182,9 +197,7 @@ namespace HiroTest
                             var str = mm.FileName;
                             str = str.Substring(0, str.LastIndexOf("\\"));
                             str = str + "\\users\\" + Environment.UserName + "\\config\\" + Environment.UserName + ".hus";
-                            str = Read_Ini(str, "config", "port", "null");
-                            int port = int.Parse(str);
-                            return port;
+                            return str;
                         }
                     }
                     catch
@@ -192,7 +205,7 @@ namespace HiroTest
                     }
                 }
             }
-            return -1;
+            return string.Empty;
         }
 
         public static string Read_Ini(string iniFilePath, string Section, string Key, string defaultText)
